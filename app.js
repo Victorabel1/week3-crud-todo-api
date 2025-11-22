@@ -39,18 +39,45 @@ app.patch('/todos/:id', (req, res) =>{
 //Delete or Remove route
 app.delete('/todos/:id', (req, res) =>{
     const id = parseInt(req.params.id);
-    const initialLenght = todos.lenght;
+    const initialLenght = todos.length;
     todos = todos.filter((t) => t.id !==id); //Array.filter() -non-destructive. Find todos not equal to our particular id
     if (todos.lenght ===initialLenght)
         return res.status(404).json({error: 'Not Found'});
     res.status(204).json({message: 'Todo Deleted Successfully'}); // can use res.status(204).send(); for a Silent success  
 });
 
-//another route
+//another get route to return completed todos
 app.get('/todos/completed', (req, res) =>{
     const completed = todos.filter((t) => t.completed);
     res.json(completed); //Custom read
 });
+
+
+// ASSIGNMENT: GET /todos/:id (Single read)
+app.get('/todos/:id', (req, res) => {
+    const todo = todos.find((t) => t.id === parseInt(req.params.id));
+    if (!todo) return res.status(404).json({ message: 'Todo not Found' });
+    res.status(200).json(todo);
+});
+
+// ASSIGNMENT: POST with Validation
+app.post('/todos', (req, res) => {
+    // Check if task exists
+    if (!req.body.task) {
+        return res.status(400).json({ error: 'The "task" field is required.' });
+    }
+    
+    const newTodo = { id: todos.length + 1, ...req.body };
+    todos.push(newTodo);
+    res.status(201).json(newTodo);
+});
+
+//ASSIGNMENT: GET /todos/active (Must be BEFORE /todos/:id)
+app.get('/todos/active', (req, res) => {
+    const activeTodos = todos.filter((t) => !t.completed);
+    res.status(200).json(activeTodos);
+});
+
 
 //error handler. In case there is an error gotten from server
 app.use((err, req, res, next) => {
