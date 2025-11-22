@@ -62,17 +62,15 @@ app.get('/todos/:id', (req, res) => {
 
 // ASSIGNMENT: POST with Validation
 app.post('/todos', (req, res) => {
-    // Check if task exists
     if (!req.body.task) {
         return res.status(400).json({ error: 'The "task" field is required.' });
-    }
-    
+    }     // Check if task exists
     const newTodo = { id: todos.length + 1, ...req.body };
     todos.push(newTodo);
     res.status(201).json(newTodo);
 });
 
-//ASSIGNMENT: GET /todos/active (Must be BEFORE /todos/:id)
+//ASSIGNMENT: GET /todos/active (BEFORE /todos/:id)
 app.get('/todos/active', (req, res) => {
     const activeTodos = todos.filter((t) => !t.completed);
     res.status(200).json(activeTodos);
